@@ -3,4 +3,5 @@
     <string name="title_text">Title</string>
     <string name="description_text">Description</string>
     <string name="save_text">Save</string>
+    <string name="load_text">Load</string>
 </resources>
