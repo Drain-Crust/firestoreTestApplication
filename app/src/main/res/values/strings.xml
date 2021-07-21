@@ -4,4 +4,7 @@
     <string name="description_text">Description</string>
     <string name="save_text">Save</string>
     <string name="load_text">Load</string>
+    <string name="update_description">Update Description</string>
+    <string name="delete_description">Delete Description</string>
+    <string name="delete_note">Delete note</string>
 </resources>

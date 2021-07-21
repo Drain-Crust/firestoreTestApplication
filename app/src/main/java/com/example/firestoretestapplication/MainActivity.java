@@ -6,10 +6,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -40,12 +42,48 @@ public class MainActivity extends AppCompatActivity {
         theDocument = firebaseFirestore.collection("NoteBook").document("My first note");
     }
 
+    @SuppressLint("SetTextI18n")
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        theDocument.addSnapshotListener(this, (documentSnapshot, error) -> {
+            if (error != null) {
+                Toast.makeText(MainActivity.this, "Error while loading", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Error while loading: " + error.toString());
+                return;
+            }
+
+            assert documentSnapshot != null;
+            if (documentSnapshot.exists()) {
+                String title = documentSnapshot.getString(KEY_TITLE);
+                String description = documentSnapshot.getString(KEY_DESCRIPTION);
+
+                textViewData.setText("Title: " + title + "\nDescription: " + description);
+            } else {
+                textViewData.setText("");
+            }
+        });
+    }
+
     public void save(View view) {
         save();
     }
 
     public void load(View view) {
         load();
+    }
+
+    public void updateDescription(View view) {
+        updateDescription();
+    }
+
+    public void deleteDescription(View view){
+        deleteDescription();
+    }
+
+    public void deleteNote(View view){
+        deleteNote();
     }
 
     private void save() {
@@ -75,5 +113,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> Log.d(TAG, "isFailure: " + e.toString()));
+    }
+
+    private void updateDescription() {
+        String description = editTextDescription.getText().toString();
+
+        Map<String, Object> note = new HashMap<>();
+        note.put(KEY_DESCRIPTION,description);
+
+        theDocument.update(note);
+    }
+
+    private void deleteDescription(){
+        theDocument.update(KEY_DESCRIPTION, FieldValue.delete()); // can add an onSuccessListener or onFailureListener
+    }
+
+    private void deleteNote(){
+        theDocument.delete();
     }
 }
