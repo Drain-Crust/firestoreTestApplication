@@ -14,9 +14,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -24,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_TITLE = "title";
     private static final String KEY_DESCRIPTION = "description";
     private DocumentReference theDocument;
+    Note note;
 
     private EditText editTextTitle;
     private EditText editTextDescription;
@@ -56,10 +54,9 @@ public class MainActivity extends AppCompatActivity {
 
             assert documentSnapshot != null;
             if (documentSnapshot.exists()) {
-                String title = documentSnapshot.getString(KEY_TITLE);
-                String description = documentSnapshot.getString(KEY_DESCRIPTION);
-
-                textViewData.setText("Title: " + title + "\nDescription: " + description);
+                note = documentSnapshot.toObject(Note.class);
+                assert note != null;
+                textViewData.setText("Title: " + note.getTitle() + "\nDescription: " + note.getDescription());
             } else {
                 textViewData.setText("");
             }
@@ -90,9 +87,7 @@ public class MainActivity extends AppCompatActivity {
         String title = editTextTitle.getText().toString();
         String description = editTextDescription.getText().toString();
 
-        Map<String, Object> note = new HashMap<>();
-        note.put(KEY_TITLE, title);
-        note.put(KEY_DESCRIPTION, description);
+        note = new Note(title, description);
 
         theDocument.set(note)
                 .addOnSuccessListener(unused -> Log.d(TAG, "isSuccessful"))
@@ -104,10 +99,9 @@ public class MainActivity extends AppCompatActivity {
         theDocument.get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        String title = documentSnapshot.getString(KEY_TITLE);
-                        String description = documentSnapshot.getString(KEY_DESCRIPTION);
-
-                        textViewData.setText("Title: " + title + "\nDescription: " + description);
+                        note = documentSnapshot.toObject(Note.class);
+                        assert note != null;
+                        textViewData.setText("Title: " + note.getTitle() + "\nDescription: " + note.getDescription());
                     } else {
                         Log.d(TAG, "Document does not exist");
                     }
@@ -117,11 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateDescription() {
         String description = editTextDescription.getText().toString();
-
-        Map<String, Object> note = new HashMap<>();
-        note.put(KEY_DESCRIPTION,description);
-
-        theDocument.update(note);
+        theDocument.update(KEY_DESCRIPTION,description);
     }
 
     private void deleteDescription(){
