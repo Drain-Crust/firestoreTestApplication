@@ -13,6 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,18 +24,20 @@ public class MainActivity extends AppCompatActivity {
     private static final String KEY_TITLE = "title";
     private static final String KEY_DESCRIPTION = "description";
     private DocumentReference theDocument;
+    FirebaseFirestore firebaseFirestore;
     Note note;
 
     private EditText editTextTitle;
     private EditText editTextDescription;
     private TextView textViewData;
+    List<String> names;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         editTextTitle = findViewById(R.id.edit_text_title);
         editTextDescription = findViewById(R.id.edit_text_description);
